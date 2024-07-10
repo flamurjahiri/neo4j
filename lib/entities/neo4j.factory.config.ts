@@ -1,7 +1,7 @@
 export class Neo4jFactoryConfig {
     database: string;
     connectionName?: string;
-    indexes: string[];
+    indexes?: string[];
 
 
     constructor(database: string, connectionName?: string, indexes?: string[]) {
