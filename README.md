@@ -6,8 +6,6 @@
 This module provides a simple and efficient way to interact with Neo4j databases within your NestJS applications. It
 offers a clean and intuitive API for executing queries, managing connections, and handling health checks.
 
-
-
 ## Ready to Unleash the Power of Graphs? Let's Get Coding!
 
 ### Installation
@@ -16,119 +14,134 @@ offers a clean and intuitive API for executing queries, managing connections, an
 npm i neo4j-nestjs
 ```
 
-### USAGE:
+### Configuration
 
-#### For Root Module:
+#### Neo4JModule.forRoot()
 
-##### The forRoot method is used to configure the Neo4j module for your application's root module. It provides a global configuration for all Neo4j connections within your application.
+> The Neo4jModule.forRoot() is used to configure the Neo4j module for your application's root module. It provides a
+> global configuration for all Neo4j connections within your application.
+>
+> This method takes an object with the following configuration options | Single or Array:
+>
+> * **uri:** The URI of the Neo4j database.
+> * **user:** The username for the Neo4j database.
+> * **password:** The password for the Neo4j database.
+> * **connectionName:** (Optional) The name of the connection (in case of multiple clusters).
+>
+> **Example:**
+>
+> ```typescript
+> import { Module } from '@nestjs/common';
+> import { Neo4jModule } from 'neo4j-nestjs';
+>
+> @Module({
+>   imports: [
+>     Neo4jModule.forRoot({
+>       uri: 'bolt://localhost:7687',
+>       user: 'neo4j',
+>       password: 'password',
+>       connectionName: 'default'
+>     }),
+>   ],
+> })
+> export class AppModule {}
+> ```
 
-##### uri: connection uri
+#### Neo4jModule.forFeature()
 
-##### user: username
+> The Neo4jModule.forFeature() allows you to configure the Neo4j module for a specific feature module.
+>
+> This method takes an object with the following configuration options | Single or Array:
+>
+> * **database:** The database name.
+> * **indexes:** List of indexes you want to create on startup for that database.
+> * **connectionName:** (Optional) The name of the connection (in case of multiple clusters).
+>
+> **Example:**
+>
+> ```typescript
+> import { Module } from '@nestjs/common';
+> import { Neo4jModule } from 'neo4j-nestjs';
+>
+> @Module({
+>   imports: [
+>     Neo4jModule.forFeature({
+>       database: 'neo4j',
+>       indexes: ['CREATE INDEX ON :Person(name)'],
+>       connectionName: 'default'
+>     }),
+>   ],
+> })
+> export class UserModule {}
+> ```
 
-##### password: password
+### Usage
 
-##### connectionName: (Optional) the name of connection (in case of multiple clusters)
+#### Database Service
 
-```
-import { Module } from '@nestjs/common';
-import { Neo4jModule } from 'neo4j-nestjs';
+> The database service is used that you can run/execute single/multiple queries on the Neo4j database.
+>
+> You can Read, Write or Execute a query on the database.
+>
+> **Comments:**
+>
+> * **InjectNeo4jDatabase:** This token is used to inject the Neo4JUtils(database utils) into your class.
+> * **database:** Specifies the name of the database.
+> * **connectionName:** (Optional) The name of the connection (in case of multiple clusters).
+>
+> **Example:**
+>
+> ```typescript
+> import { Injectable, Inject } from '@nestjs/common';
+> import { InjectNeo4jDatabase , Neo4JUtils } from 'neo4j-nestjs';
+> 
+> @Injectable()
+> export class MyService {
+> 
+>   @InjectNeo4jDatabase('myDatabase', 'connectionName') private readonly neo4j: Neo4JUtils;
+> 
+>   async getDataAsPromise() {
+>      const result = await lastValueFrom(this.neo4j.query('MATCH (n) RETURN n', 'READ'));
+>      return result;
+>   }
+>
+>   getDataAsObservable() {
+>      return this.neo4j.query('MATCH (n) RETURN n', 'READ');
+>   }
+>}
+> ```
 
-@Module({
-  imports: [
-    Neo4jModule.forRoot({
-      uri: 'bolt://localhost:7687',
-      user: 'neo4j',
-      password: 'password',
-      connectionName : 'default'
-    }),
-  ],
-})
-export class AppModule {}
-```
+#### Health Service
 
-#### For Feature Module
-
-##### forFeature: This method allows you to configure the Neo4j module for a specific feature module.
-
-##### database: Specifies the name of the database connection.
-
-##### connection: This name is used to identify the connection when injecting the Neo4JUtils service.
-
-##### indexes: (Optional) An array of Cypher queries to create indexes on the database.
-
-```
-import { Module } from '@nestjs/common';
-import { Neo4jModule } from 'neo4j-nestjs';
-
-@Module({
-  imports: [
-    Neo4jModule.forFeature([
-      {
-        database: 'myDatabase', // Name of the database connection
-        indexes: ['CREATE INDEX ON :Person(name)'], // Optional: Create indexes
-      },
-    ]),
-  ],
-})
-export class MyFeatureModule {}
-
-```
-
-#### Inject the Database Service
-
-##### database: Specifies the name of the database connection.
-
-##### connection: (Optional) This name is used to identify the connection when injecting the Neo4JUtils service.
-
-```
-import { Injectable, Inject } from '@nestjs/common';
-import { NEO_4J_DATABASE , Neo4JUtils } from 'neo4j-nestjs';
-
-@Injectable()
-export class MyService {
-  constructor(
-    @Inject(NEO_4J_DATABASE('myDatabase', 'connectionName'))
-    private readonly neo4j: Neo4JUtils,
-  ) {}
-
-  async getDataAsPromise() {
-    const result = await lastValueFrom(this.neo4j.query('MATCH (n) RETURN n', 'READ'));
-    return result;
-  }
-  
-  getDataAsObservable() {
-    return this.neo4j.query('MATCH (n) RETURN n', 'READ');
-  }
-}
-```
-
-#### Inject the Health Check
-
-##### NEO_4J_HEALTH_CHECK: This token is used to inject the Neo4JHealthService into your providers.
-
-##### connectionName: (Optional) This name is used to identify the connection when injecting the Neo4JUtils service.
-
-##### checkHealth(): This method on the Neo4JHealthService performs a health check on the Neo4j connection and returns a health status object.
-
-```
-import { Injectable, Inject } from '@nestjs/common';
-import { Neo4JHealthService , NEO_4J_HEALTH_CHECK } from 'neo4j-nestjs';
-
-@Injectable()
-export class HealthCheckService {
-  constructor(
-    @Inject(NEO_4J_HEALTH_CHECK('connectionName'))
-    private readonly healthService: Neo4JHealthService,
-  ) {}
-
-  async checkHealthAsPromise() {
-    const health = await lastValueFrom(this.healthService.check());
-    return health;
-  }
-  
-  checkHealthAsObservable() {
-    return this.healthService.check();
-  }
-}
-```
+> The health service is used to check the health of the Neo4j database connection.
+>
+> You can use a specific client or all clients to check the health of the Neo4j database.
+>
+> **Comments:**
+>
+> * **InjectNeo4jHealth:** This token is used to inject the Neo4JHealthService into your class.
+> * **connectionName:** (Optional) The name of the connection (in case of multiple clusters).
+>
+> * **checkHealth:** This method on the Neo4JHealthService performs a health check on the Neo4j connection and returns a health status object.
+>
+> **Example:**
+>
+> ```typescript
+> import { Injectable, Inject } from '@nestjs/common';
+> import { InjectNeo4jDatabase , Neo4JUtils } from 'neo4j-nestjs';
+> 
+> @Injectable()
+> export class HealthCheckService {
+> 
+>   @InjectNeo4jHealth('myDatabase', 'connectionName') private readonly healthService: Neo4JHealthService;
+> 
+>   async checkHealthAsPromise() {
+>      const health = await lastValueFrom(this.healthService.check());
+>      return result;
+>   }
+>
+>   checkHealthAsObservable() {
+>      return this.healthService.check();
+>   }
+>}
+> ```
