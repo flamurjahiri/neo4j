@@ -17,5 +17,10 @@
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false
+  },
+  "paths": {
+    "@nestjs/neo4j": [
+      "lib/index.ts"
+    ]
   }
 }
