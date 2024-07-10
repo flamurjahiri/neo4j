@@ -8,7 +8,7 @@ import {WriteOperation} from './processor/impl/write.operation';
 import {ExecuteOperation} from './processor/impl/execute.operation';
 import {DatabaseOperationProvider} from './processor/database.operation.provider';
 import {Neo4jFactoryConfig} from './entities/neo4j.factory.config';
-import {concatMap, filter, from, lastValueFrom, map, mergeMap, Observable, of, toArray} from 'rxjs';
+import {concatMap, filter, from, lastValueFrom, map, Observable, of, toArray} from 'rxjs';
 import {NEO_4J_CONNECTION_DRIVER, NEO_4J_DATABASE, NEO_4J_HEALTH_CHECK} from "./constants";
 
 
@@ -123,9 +123,8 @@ const GET_FEATURE_PROVIDERS = (configs: Neo4jFactoryConfig[]): Provider<Neo4JUti
         .map(config => ({
             provide: NEO_4J_DATABASE(config.database, config.connectionName),
             useFactory: async (driver: Driver, provider: DatabaseOperationProvider) => {
-                const utils = new Neo4JUtils(driver, config.database, provider);
                 return lastValueFrom(
-                    INIT_DATABASE(config, utils).pipe(mergeMap(utils => INIT_INDEXES(config, utils)))
+                    INIT_INDEXES(config, new Neo4JUtils(driver, config.database, provider))
                 );
             },
             inject: [NEO_4J_CONNECTION_DRIVER(config.connectionName), DatabaseOperationProvider]
