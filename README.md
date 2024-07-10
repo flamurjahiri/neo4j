@@ -15,13 +15,13 @@ npm install @nestjs/neo4j
 
 #### The forRoot method is used to configure the Neo4j module for your application's root module. It provides a global configuration for all Neo4j connections within your application.
 
-#### uri -> connection uri
+#### uri: connection uri
 
-#### user -> username
+#### user: username
 
-#### password -> password
+#### password: password
 
-#### connectionName -> (Optional) the name of connection (in case of multiple clusters)
+#### connectionName: (Optional) the name of connection (in case of multiple clusters)
 
 ```
 import { Module } from '@nestjs/common';
