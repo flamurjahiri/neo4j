@@ -6,7 +6,7 @@ offers a clean and intuitive API for executing queries, managing connections, an
 ## Installation
 
 ```bash
-npm install @nestjs/neo4j
+npm i neo4j-nestjs
 ```
 
 ## USAGE:
@@ -25,7 +25,7 @@ npm install @nestjs/neo4j
 
 ```
 import { Module } from '@nestjs/common';
-import { Neo4jModule } from '@nestjs/neo4j';
+import { Neo4jModule } from 'neo4j-nestjs';
 
 @Module({
   imports: [
@@ -52,7 +52,7 @@ export class AppModule {}
 
 ```
 import { Module } from '@nestjs/common';
-import { Neo4jModule } from '@nestjs/neo4j';
+import { Neo4jModule } from 'neo4j-nestjs';
 
 @Module({
   imports: [
@@ -76,8 +76,7 @@ export class MyFeatureModule {}
 
 ```
 import { Injectable, Inject } from '@nestjs/common';
-import { Neo4JUtils } from '@nestjs/neo4j';
-import { NEO_4J_DATABASE } from '@nestjs/neo4j';
+import { NEO_4J_DATABASE , Neo4JUtils } from 'neo4j-nestjs';
 
 @Injectable()
 export class MyService {
@@ -103,8 +102,7 @@ export class MyService {
 
 ```
 import { Injectable, Inject } from '@nestjs/common';
-import { Neo4JHealthService } from '@nestjs/neo4j';
-import { NEO_4J_HEALTH_CHECK } from '@nestjs/neo4j';
+import { Neo4JHealthService , NEO_4J_HEALTH_CHECK } from 'neo4j-nestjs';
 
 @Injectable()
 export class HealthCheckService {
