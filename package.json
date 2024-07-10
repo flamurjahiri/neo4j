@@ -1,6 +1,6 @@
 {
   "name": "neo4j-nestjs",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "",
   "types": "dist/index.d.ts",
   "repository": "https://github.com/flamurjahiri/neo4j",
