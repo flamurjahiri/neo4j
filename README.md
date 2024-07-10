@@ -85,9 +85,13 @@ export class MyService {
     private readonly neo4j: Neo4JUtils,
   ) {}
 
-  async getData() {
-    const result = await this.neo4j.query('MATCH (n) RETURN n', 'READ');
+  async getDataAsPromise() {
+    const result = await lastValueFrom(this.neo4j.query('MATCH (n) RETURN n', 'READ'));
     return result;
+  }
+  
+  getDataAsObservable() {
+    return this.neo4j.query('MATCH (n) RETURN n', 'READ');
   }
 }
 ```
@@ -111,9 +115,13 @@ export class HealthCheckService {
     private readonly healthService: Neo4JHealthService,
   ) {}
 
-  async checkHealth() {
-    const health = await this.healthService.check();
+  async checkHealthAsPromise() {
+    const health = await lastValueFrom(this.healthService.check());
     return health;
+  }
+  
+  checkHealthAsObservable() {
+    return this.healthService.check();
   }
 }
 ```
