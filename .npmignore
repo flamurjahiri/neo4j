@@ -2,6 +2,7 @@
 lib
 index.ts
 
+assets
 # tests
 /tests
 
