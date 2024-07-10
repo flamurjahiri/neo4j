@@ -133,7 +133,7 @@ npm i neo4j-nestjs
 > @Injectable()
 > export class HealthCheckService {
 > 
->   @InjectNeo4jHealth('myDatabase', 'connectionName') private readonly healthService: Neo4JHealthService;
+>   @InjectNeo4jHealth('connectionName') private readonly healthService: Neo4JHealthService;
 > 
 >   async checkHealthAsPromise() {
 >      const health = await lastValueFrom(this.healthService.check());
