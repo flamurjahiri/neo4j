@@ -4,7 +4,6 @@
   "description": "",
   "types": "dist/index.d.ts",
   "author": "",
-  "private": true,
   "license": "UNLICENSED",
   "scripts": {
     "build": "nest build",
