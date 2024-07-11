@@ -93,7 +93,8 @@ npm i neo4j-nestjs
 >
 > ```typescript
 > import { Injectable, Inject } from '@nestjs/common';
-> import { InjectNeo4jDatabase , Neo4JUtils } from 'neo4j-nestjs';
+> import { InjectNeo4jDatabase, Neo4JUtils, Neo4jOperation } from 'neo4j-nestjs';
+> import { lastValueFrom } from "rxjs";
 > 
 > @Injectable()
 > export class MyService {
@@ -101,12 +102,12 @@ npm i neo4j-nestjs
 >   @InjectNeo4jDatabase('myDatabase', 'connectionName') private readonly neo4j: Neo4JUtils;
 > 
 >   async getDataAsPromise() {
->      const result = await lastValueFrom(this.neo4j.query('MATCH (n) RETURN n', 'READ'));
+>      const result = await lastValueFrom(this.neo4j.query('MATCH (n) RETURN n', Neo4jOperation.READ));
 >      return result;
 >   }
 >
 >   getDataAsObservable() {
->      return this.neo4j.query('MATCH (n) RETURN n', 'READ');
+>      return this.neo4j.query('MATCH (n) RETURN n', Neo4jOperation.READ);
 >   }
 >}
 > ```
@@ -128,16 +129,18 @@ npm i neo4j-nestjs
 >
 > ```typescript
 > import { Injectable, Inject } from '@nestjs/common';
-> import { InjectNeo4jDatabase , Neo4JUtils } from 'neo4j-nestjs';
+> import { InjectNeo4jHealth, Neo4JHealthService } from 'neo4j-nestjs';
+> import { lastValueFrom } from "rxjs";
 > 
 > @Injectable()
 > export class HealthCheckService {
 > 
->   @InjectNeo4jHealth('connectionName') private readonly healthService: Neo4JHealthService;
+>   //@InjectNeo4jHealth('connectionName') private readonly healthService: Neo4JHealthService; //a specific cluster (connectionName)
+>   @InjectNeo4jHealth() private readonly healthService: Neo4JHealthService; //all clusters
 > 
 >   async checkHealthAsPromise() {
 >      const health = await lastValueFrom(this.healthService.check());
->      return result;
+>      return health;
 >   }
 >
 >   checkHealthAsObservable() {
