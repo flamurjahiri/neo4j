@@ -1,6 +1,6 @@
 {
   "name": "neo4j-nestjs",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "This module provides a simple and efficient way to interact with Neo4j databases within your NestJS applications. It offers a clean and intuitive API for executing queries, managing connections, and handling health checks.",
   "types": "dist/index.d.ts",
   "repository": "https://github.com/flamurjahiri/neo4j",
