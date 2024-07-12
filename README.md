@@ -123,7 +123,8 @@ npm i neo4j-nestjs
 > * **InjectNeo4jHealth:** This token is used to inject the Neo4JHealthService into your class.
 > * **connectionName:** (Optional) The name of the connection (in case of multiple clusters).
 >
-> * **checkHealth:** This method on the Neo4JHealthService performs a health check on the Neo4j connection and returns a health status object.
+> * **checkHealth:** This method on the Neo4JHealthService performs a health check on the Neo4j connection and returns a
+    health status object.
 >
 > **Example:**
 >
@@ -146,5 +147,31 @@ npm i neo4j-nestjs
 >   checkHealthAsObservable() {
 >      return this.healthService.check();
 >   }
+>}
+> ```
+
+#### Driver Injection
+
+> You can also inject the driver if you need custom configuration for the driver.
+>
+> You can use a specific client or all clients to inject the driver.
+>
+> **Comments:**
+>
+> * **InjectNeo4jDriver:** This token is used to inject the Neo4j Driver.
+> * **connectionName:** (Optional) The name of the connection.
+>
+> **Example:**
+>
+> ```typescript
+> import { Injectable, Inject } from '@nestjs/common';
+> import { InjectNeo4jDriver } from 'neo4j-nestjs';
+> import {Driver} from 'neo4j-driver';
+> 
+> @Injectable()
+> export class MyService {
+> 
+>   @InjectNeo4jDriver('connectionName') private readonly driver: Driver;
+>
 >}
 > ```
