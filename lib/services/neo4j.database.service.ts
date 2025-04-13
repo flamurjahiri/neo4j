@@ -47,14 +47,14 @@ export class Neo4JUtils {
                 parameters?: Parameters,
                 config?: TransactionConfig,
                 sessionParams?: SessionConfig): Observable<ResultSummary[] | Record[]> {
-        const session = this.driver.rxSession({...(sessionParams || {}), database: this.database});
 
         const provider = this.operationProvider.getProvider(operation);
 
         if (!provider) {
-            return throwError(() => new BadRequestException('Not supported!'));
+            return throwError(() => new BadRequestException(`${operation} is not supported!`));
         }
 
+        const session = this.driver.rxSession({...(sessionParams || {}), database: this.database});
         // because of the Comment #1
         // we close connection on stream finish
         return provider.run(queries, session, parameters || {}, config).pipe(
