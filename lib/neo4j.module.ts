@@ -22,7 +22,6 @@ class ConnectionDriver {
 @Module({})
 export class Neo4jModule {
 
-    static USED_DATABASE: { database: string; connectionName: string }[] = [];
 
     static forRoot(data: Neo4jConfig | Neo4jConfig[]): DynamicModule {
 
@@ -119,7 +118,6 @@ const MAP_FEATURE_CONFIGS = (data: Neo4jFactoryConfig | Neo4jFactoryConfig[]): N
 
 const GET_FEATURE_PROVIDERS = (configs: Neo4jFactoryConfig[]): Provider<Neo4JUtils>[] => {
     return configs
-        .filter(c => !Neo4jModule.USED_DATABASE.find(d => d.database === c.database && d.connectionName === c.connectionName))
         .map(config => ({
             provide: NEO_4J_DATABASE(config.database, config.connectionName),
             useFactory: async (driver: Driver, provider: DatabaseOperationProvider) => {
