@@ -10,6 +10,6 @@ export abstract class Neo4JMigration {
 
     abstract description(): string;
 
-    abstract migrationQuery(): Observable<string> | Promise<string> | string
+    abstract migrationQuery(): Observable<string> | Observable<string[]> | Promise<string> | Promise<string[]> | string | string[]
 
 }

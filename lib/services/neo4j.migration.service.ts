@@ -1,5 +1,19 @@
 import {Driver} from "neo4j-driver";
-import {concatMap, defer, filter, finalize, from, map, mergeMap, Observable, of, reduce, takeLast, tap} from "rxjs";
+import {
+    concatMap,
+    defer,
+    filter,
+    finalize,
+    forkJoin,
+    from,
+    map,
+    mergeMap,
+    Observable,
+    of,
+    reduce,
+    takeLast,
+    tap
+} from "rxjs";
 import {Neo4JMigration} from "../entities";
 import {Logger} from "@nestjs/common";
 
@@ -39,7 +53,12 @@ export class Neo4jMigrationService {
                         concatMap(migration => {
 
                             return defer(() => from(migration.migrationQuery())).pipe(
-                                mergeMap(query => session.executeWrite(tx => tx.run(query).consume())),
+                                reduce((a, v: string | string[]) => a.concat(v), [] as string[]),
+                                mergeMap(queries => {
+                                    return session.executeWrite(tx =>
+                                        forkJoin(queries.map(q => tx.run(q).consume())).pipe(takeLast(1))
+                                    );
+                                }),
                                 takeLast(1),
                                 concatMap(() => {
                                     return session.executeWrite(tx => tx.run('CREATE (a:InternalNeo4jMigration {version: $version, description: $description, createdAt: $createdAt})', {
