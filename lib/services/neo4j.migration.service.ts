@@ -79,7 +79,7 @@ export class Neo4jMigrationService {
                 }
             ),
             tap(_ => Logger.log('Neo4j Migration: All Database migration started successfully!')),
-            finalize(() => session.close().subscribe({error: (err) => Logger.error('Failed to close session', err)}))
+            finalize(() => session.close().subscribe({error: (err) => Logger.error('Neo4j Migration: Failed to close session', err)}))
         )
 
 
